@@ -215,7 +215,6 @@ body {
 	background: -moz-linear-gradient(top, #F2F2F2 0%, #D6D6D6 100%); /* firefox */
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#F2F2F2), color-stop(100%,#D6D6D6)); /* webkit */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#F2F2F2', endColorstr='#D6D6D6',GradientType=0 ); /* ie */
-
 	font-family: 'Lucida Grande', 'Lucida Sans Unicode', Arial, Verdana, sans-serif;
 	color: #444;
 	font-size: 9pt;
@@ -336,14 +335,12 @@ body {
 	background: #ddd; 
 	background: -moz-linear-gradient(top, #F2F2F2 0%, #D6D6D6 100%); /* firefox */
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#F2F2F2), color-stop(100%,#D6D6D6)); /* webkit */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#F2F2F2', endColorstr='#D6D6D6',GradientType=0 ); /* ie */
-	
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#F2F2F2', endColorstr='#D6D6D6',GradientType=0 ); /* ie */	
 	font-family: 'Lucida Grande', 'Lucida Sans Unicode', Arial, Verdana, sans-serif;
 	color: #444;
 	font-size: 9pt;
 	font-weight: bold;	
 }
-
 
 #ircLogSearchResultsLogView div.oddRow,
 #ircLogSearchResultsLogView div.evenRow {
@@ -429,11 +426,7 @@ body {
 	border-bottom: 1px solid #ddd;	
 	border-top: 1px solid #ddd;	
 	background: #000;
-
-	
 	background: -moz-linear-gradient(top, #4c4c4c 0%, #474747 11%, #2c2c2c 27%, #000000 64%, #111111 67%, #2b2b2b 92%, #1c1c1c 98%, #131313 100%); /* firefox */
-
-background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#4c4c4c), color-stop(11%,#474747), color-stop(27%,#2c2c2c), color-stop(64%,#000000), color-stop(67%,#111111), color-stop(92%,#2b2b2b), color-stop(98%,#1c1c1c), color-stop(100%,#131313)); /* webkit */
-
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4c4c4c', endColorstr='#131313',GradientType=0 ); /* ie */		
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#4c4c4c), color-stop(11%,#474747), color-stop(27%,#2c2c2c), color-stop(64%,#000000), color-stop(67%,#111111), color-stop(92%,#2b2b2b), color-stop(98%,#1c1c1c), color-stop(100%,#131313)); /* webkit */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4c4c4c', endColorstr='#131313',GradientType=0 ); /* ie */		
 }

@@ -1,5 +1,7 @@
 <?php
-	$version = "0.16b";
+	// Version string in URLs is used to prevent unwanted caching of JS and CSS files following upgrades.
+	// As a side effect, also causes browsers to more aggressively cache if it remains unchanged.
+	$version = "0.17b";
 ?>
 <!DOCTYPE html>
 <html>
