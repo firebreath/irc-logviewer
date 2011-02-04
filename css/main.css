@@ -364,9 +364,11 @@ body {
 	font-weight: bold;	
 }
 
+
 #ircLogSearchResultsLogView div.oddRow,
 #ircLogSearchResultsLogView div.evenRow {
-	font-family: Monaco, Courier, monospace;
+	font-family: Andale Mono, monospace;
+	font-size: 8pt;
 	width: auto;
 	border-bottom: 1px solid #444;	
 	color: #fff;
@@ -374,8 +376,16 @@ body {
 	padding-top: 2px;
 	padding-bottom: 2px;	
 	overflow: auto;
-	font-size: 8pt;
 }
+
+/* Webkit specific rendering tweak (for Safari and Chrome) */
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+	#ircLogSearchResultsLogView div.oddRow,
+	#ircLogSearchResultsLogView div.evenRow {
+		font-size: 8pt;
+	}
+}
+
 
 #ircLogSearchResultsLogView div.evenRow {
 	background: #1a1a1a;
@@ -389,7 +399,7 @@ body {
 
 #ircLogSearchResultsLogView .keyword {
 	background: #ffb500;
-	color: #996302;
+	color: #6d3d00;
 	font-weight: bold;
 }
 
@@ -404,9 +414,8 @@ body {
 	width: 110px;
 	padding-right: 10px;
 	overflow: hidden;
-	font-weight: bold;
 	text-align: right;
-	color: #aaa;	
+	color: #bbb;	
 }
 
 #ircLogSearchResultsLogView .systemMsg {
