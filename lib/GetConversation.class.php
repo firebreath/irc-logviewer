@@ -6,9 +6,12 @@ include_once(dirname(__FILE__).'/PathValidator.class.php');
 if (!array_key_exists('irc-logviewer-config', $GLOBALS))
 	$GLOBALS['irc-logviewer-config'] = parse_ini_file("config.ini", true);
 
-// Set timezone as UTC. Not currently possible change timezone from whatever was used to capture the logfiles,
-// but should be configured as something or will generate errors with E_STRICT 
-date_default_timezone_set('UTC');
+// Set timezone to whatever the time zone of the server currently is (assumes
+// the logs are timestamped using system time, which is overwhelming likely).
+// TODO: Make configurable option in config.ini
+// FIXME: This does not work repliaibly on PHP for Windows (because on
+// Windows the zone value returned is not always in a compatible format).
+@date_default_timezone_set(date("T"));
 
 class GetConversation {
 
@@ -66,10 +69,13 @@ class GetConversation {
 		$minLines = 25; // Good when people ask questions during the night that are not answered for hours
 		$maxLines = 250; // TODO: Create UI option so users can load more of a convo if they really want
 
-		$lineCounter = 0;
+		$lineCount = 0;
+		$matchingLineCount = 0;		
 		$fileHandle = fopen($pathToFile, "r") or die("Unable to open IRC log file for reading.");
 		while(!feof($fileHandle)) {
 			$line = fgets($fileHandle);
+			
+			$lineCount++;
 			
 			// Get timestamp (based on filename + time on line where match was found)
 			@list($time, $username, $msg) = explode(' ', $line, 3);
@@ -77,17 +83,19 @@ class GetConversation {
 			$time = preg_replace("/[^0-9:]/", "", $time);
 			$timestamp = strtotime($date." ".$time);	
 	
+			$logLine = null;
 			if ($time && $username) {			
 				$msg = preg_replace("/\n$/", "", $msg);			
 				$msg = htmlentities($msg);				
 				$msg = $this->highliteKeywords($msg, $keywords);									
 				
 				if ($timestamp >= $startTimeStamp) {
-					array_push($this->conversation, array('time' => $time, 'user' => $username, 'msg' => $msg));
-					$lineCounter++;
+					$logLine = array('line' => $lineCount, 'time' => $time, 'user' => $username, 'msg' => $msg);
+					$matchingLineCount++;
 				}
 
 			} else {
+				// Handle system messages & emotes (i.e. lines without a username)
 				@list($time, $msg) = explode(' ', $line, 2);
 				$time = preg_replace("/[^0-9:]/", "", $time);
 				$timestamp = strtotime($date." ".$time);	
@@ -97,18 +105,21 @@ class GetConversation {
 				$msg = $this->highliteKeywords($msg, $keywords);				
 				
 				if ($timestamp >= $startTimeStamp) {
-					array_push($this->conversation, array('time' => $time, 'msg' => $msg));									
-					$lineCounter++;					
+					$logLine = array('line' => $lineCount, 'time' => $time, 'msg' => $msg);								
+					$matchingLineCount++;					
 				}
 			}
 			
+			if ($logLine !== null)			
+				array_push($this->conversation,$logLine);
+						
 			// Only attempt to exit if we have got at least number of lines in $minLines 
-			if ($lineCounter >= $minLines)
+			if ($matchingLineCount >= $minLines)
 				if ($timestamp > $endTimeStamp)
 					break;
 			
 			// Exit early if we have hit $maxLines
-			if ($lineCounter >= $maxLines)		
+			if ($matchingLineCount >= $maxLines)		
 				break;
 			
 		}

@@ -7,9 +7,12 @@ include_once(dirname(__FILE__).'/PathValidator.class.php');
 if (!array_key_exists('irc-logviewer-config', $GLOBALS))
 	$GLOBALS['irc-logviewer-config'] = parse_ini_file("config.ini", true);
 
-// Set timezone as UTC. Not currently possible change timezone from whatever was used to capture the logfiles,
-// but should be configured as something or will generate errors with E_STRICT 
-date_default_timezone_set('UTC');
+// Set timezone to whatever the time zone of the server currently is (assumes
+// the logs are timestamped using system time, which is overwhelming likely).
+// TODO: Make configurable option in config.ini
+// FIXME: This does not work repliaibly on PHP for Windows (because on
+// Windows the zone value returned is not always in a compatible format).
+@date_default_timezone_set(date("T"));
 
 class Search {
 
@@ -138,8 +141,8 @@ class Search {
 			$searchResult->duration = $searchResult->endTime - $searchResult->startTime;
 			
 			// Convert from UNIX timestamps to a human readable timestamp
-			$searchResult->startTime = date('Y-m-d H:i:s', $searchResult->startTime);
-			$searchResult->endTime = date('Y-m-d H:i:s', $searchResult->endTime);
+			$searchResult->startTime = date('Y-m-d H:i', $searchResult->startTime);
+			$searchResult->endTime = date('Y-m-d H:i', $searchResult->endTime);
 			 		 
 			// Sort keyword and user arrays by frequency of mentions
 			arsort($searchResult->keywords, SORT_NUMERIC);
