@@ -10,11 +10,11 @@ body {
 
 #header {
 	padding: 8px;
-	background: #c44700; /* old browsers */
-	background: -moz-linear-gradient(top, #f17432 0%, #BC4B05 100%); /* firefox */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f17432), color-stop(100%,#BC4B05)); /* webkit */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f17432', endColorstr='#BC4B05',GradientType=0 ); /* ie */
-	border-bottom: 2px solid #7b2d00;	
+	background: #c44700;
+	background: -moz-linear-gradient(top, #F17432 0%, #BC4B05 54%, #BC4B05 96%); /* firefox */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#F17432), color-stop(54%,#BC4B05), color-stop(96%,#BC4B05)); /* webkit */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#F17432', endColorstr='#BC4B05',GradientType=0 ); /* ie */
+	border-bottom: 2px solid #7b2d00;
 }
 
 #header h1 {
@@ -47,48 +47,57 @@ body {
 }
 
 #ircLogSearchFormContainer {
-	text-align: center;
-	margin-top: 20px;
+	margin-top: 5px;
 	margin-bottom: 30px;
 	clear: both;	
+ 	margin-left: auto;
+  	margin-right: auto;
+	width: 660px;
 }
 
 #ircLogSearchForm {	
-	position: relative;
-	display: inline;
 	margin: 0;
-	padding: 15px;
-	padding-right: 5px;
+	padding: 10px;
+	float: left;	
 	border: 1px solid #ddd;	
 	-border-radius: 8pt;	
 	-moz-border-radius: 8pt;
 	-webkit-border-radius: 8pt;
 	-khtml-border-radius: 8pt;
-	background-color: #f9f9f9;			
+	background-color: #f9f9f9;
+}
+
+#ircLogSearchForm select {
+	float: left;	
+	margin-right: 15px;	
+	margin-top: 5px;	
 }
 
 #ircLogSearchForm label {	
+	float: left;
 	font-weight: bold;
 	background: transparent;
 	z-index: 0;
 	color: #666;
-	
+	margin-right: 5px;
 	font-family: 'Lucida Grande', 'Lucida Sans Unicode', Arial, Verdana, sans-serif;
 	color: #444;
-	font-size: 10pt;
+	font-size: 8pt;
 	font-weight: bold;
+	margin-top: 6px;
 }
 
 #ircLogSearchForm button  {
+	float: left;
+	margin: 0;
 	color: #444;
 	position: relative;
-	left: -7px;
+	left: -1px;
 	display: inline-block;
 	outline: none;
 	cursor: pointer;
 	text-align: center;
 	text-decoration: none;	
-	padding: .35em 1em .45em;
 	font-size: 12px;
 	font-weight: bold;
 	text-shadow: #fff 0px 1px 0px;
@@ -105,13 +114,11 @@ body {
 	background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#ededed));
 	background: -moz-linear-gradient(top,  #fff,  #ededed);
 	filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#ededed');	
-}
-
-@-moz-document url-prefix() {
-	#ircLogSearchForm button {	
-		dtop: -1px;
-		padding: 3px 10px 4px;	
-	}
+	dheight: 26px;
+	padding: 5px;	
+	dtop: 2px;
+	padding-left: 10px;
+	padding-right: 10px;
 }
 
 #ircLogSearchForm button:hover {
@@ -133,13 +140,20 @@ body {
 	filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#ffffff');
 }
 
+/* Webkit specific rendering tweak (for Safari and Chrome) */
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+	#ircLogSearchForm button {
+		top: 2px;
+	}	
+}
+
 #ircLogSearchForm input {
-	width: 180px;
+	float: left;
+	width: 150px;
 	color: #666;
 	font-size: 10pt;
 	border: 1px solid #ccc;
-	padding: 0.3em;
-	background: #fff; /* old browsers */
+	background: #fff;
 	background: -moz-linear-gradient(top, #eeeeee 0%, #FFFFFF 32%); /* firefox */
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#eeeeee), color-stop(32%,#FFFFFF)); /* webkit */	
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eeeeee', endColorstr='#FFFFFF',GradientType=0 ); /* ie */
@@ -150,12 +164,25 @@ body {
 	-moz-border-radius-bottomleft: .5em;
 	-webkit-border-bottom-left-radius: .5em;	
 	position: relative;
-	top: 1px;
-	outline-width: thin;	
+	outline-width: thin;
+	padding-top: 4px;
+	padding-bottom: 5px;
+	padding-left: 6px;
+	dmax-height: 20px;	
 }
-		
+
+/* Gecko specific rendering tweak */
+@-moz-document url-prefix() {
+	#ircLogSearchForm input {	
+		padding-top: 6px;
+	}
+}
+
 #ircLogSearchResults {
 	display: none;
+	clear: left;
+	position: relative;
+	padding-top: 10px;
 }
 
 #ircLogSearchResultsConversations {
@@ -174,12 +201,7 @@ body {
 	-webkit-border-top-left-radius: 12px;
 	-webkit-border-bottom-left-radius: 12px;	
 	padding-bottom: 20px;	
-	
-	background: #EAEAEA; /* old browsers */
-	background: -moz-linear-gradient(top, #EAEAEA 98%, #D6D6D6 100%); /* firefox */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(98%,#EAEAEA), color-stop(100%,#D6D6D6)); /* webkit */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#EAEAEA', endColorstr='#D6D6D6',GradientType=0 ); /* ie */
-
+	background: #f9f9f9;
 	font-size: 8pt;
 }
 
@@ -215,7 +237,6 @@ body {
 	background: -moz-linear-gradient(top, #F2F2F2 0%, #D6D6D6 100%); /* firefox */
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#F2F2F2), color-stop(100%,#D6D6D6)); /* webkit */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#F2F2F2', endColorstr='#D6D6D6',GradientType=0 ); /* ie */
-
 	font-family: 'Lucida Grande', 'Lucida Sans Unicode', Arial, Verdana, sans-serif;
 	color: #444;
 	font-size: 9pt;
@@ -236,10 +257,10 @@ body {
 #ircLogSearchResultsConversations .conversation:hover {
 	cursor: pointer;
 	color: #555;	
+	background: #fff;	
 	background: -moz-linear-gradient(top, #ffffff 0%, #f3f3f3 50%, #ededed 51%, #ffffff 100%); /* firefox */
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(50%,#f3f3f3), color-stop(51%,#ededed), color-stop(100%,#ffffff)); /* webkit */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ffffff',GradientType=0 ); /* ie */	
-	background: #fff;
 }
 
 #ircLogSearchResultsConversations .conversation:hover .ircConversationLabel {
@@ -281,7 +302,7 @@ body {
 #ircLogSearchResultsConversations .conversationSelected:hover {
 	border-top: 1px solid #ffb28a;
 	border-bottom: 1px solid #BC4B05;		
-	background: #c44700; /* old browsers */
+	background: #c44700;
 	background: -moz-linear-gradient(top, #f17432 0%, #BC4B05 100%); /* firefox */
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f17432), color-stop(100%,#BC4B05)); /* webkit */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f17432', endColorstr='#BC4B05',GradientType=0 ); /* ie */
@@ -336,8 +357,7 @@ body {
 	background: #ddd; 
 	background: -moz-linear-gradient(top, #F2F2F2 0%, #D6D6D6 100%); /* firefox */
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#F2F2F2), color-stop(100%,#D6D6D6)); /* webkit */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#F2F2F2', endColorstr='#D6D6D6',GradientType=0 ); /* ie */
-	
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#F2F2F2', endColorstr='#D6D6D6',GradientType=0 ); /* ie */	
 	font-family: 'Lucida Grande', 'Lucida Sans Unicode', Arial, Verdana, sans-serif;
 	color: #444;
 	font-size: 9pt;
@@ -347,7 +367,8 @@ body {
 
 #ircLogSearchResultsLogView div.oddRow,
 #ircLogSearchResultsLogView div.evenRow {
-	font-family: monospace;
+	font-family: Andale Mono, monospace;
+	font-size: 8pt;
 	width: auto;
 	border-bottom: 1px solid #444;	
 	color: #fff;
@@ -355,11 +376,19 @@ body {
 	padding-top: 2px;
 	padding-bottom: 2px;	
 	overflow: auto;
-	font-size: 8pt;
 }
 
+/* Webkit specific rendering tweak (for Safari and Chrome) */
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+	#ircLogSearchResultsLogView div.oddRow,
+	#ircLogSearchResultsLogView div.evenRow {
+		font-size: 8pt;
+	}
+}
+
+
 #ircLogSearchResultsLogView div.evenRow {
-	background: #222;
+	background: #1a1a1a;
 }
 
 #ircLogSearchResultsLogView div.oddRow div,
@@ -370,7 +399,7 @@ body {
 
 #ircLogSearchResultsLogView .keyword {
 	background: #ffb500;
-	color: #996302;
+	color: #6d3d00;
 	font-weight: bold;
 }
 
@@ -385,9 +414,8 @@ body {
 	width: 110px;
 	padding-right: 10px;
 	overflow: hidden;
-	font-weight: bold;
 	text-align: right;
-	color: #aaa;	
+	color: #bbb;	
 }
 
 #ircLogSearchResultsLogView .systemMsg {
@@ -428,12 +456,5 @@ body {
 	margin-bottom: 9px;
 	border-bottom: 1px solid #ddd;	
 	border-top: 1px solid #ddd;	
-	background: #000;
-
-	
-	background: -moz-linear-gradient(top, #4c4c4c 0%, #474747 11%, #2c2c2c 27%, #000000 64%, #111111 67%, #2b2b2b 92%, #1c1c1c 98%, #131313 100%); /* firefox */
-
-background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#4c4c4c), color-stop(11%,#474747), color-stop(27%,#2c2c2c), color-stop(64%,#000000), color-stop(67%,#111111), color-stop(92%,#2b2b2b), color-stop(98%,#1c1c1c), color-stop(100%,#131313)); /* webkit */
-
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4c4c4c', endColorstr='#131313',GradientType=0 ); /* ie */		
+	background: #000;	
 }

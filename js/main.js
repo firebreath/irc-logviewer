@@ -1,24 +1,18 @@
 
-//jQuery(document).ready(function() {
-window.onload = function() {
-	//jQuery("select, input:checkbox, input:radio, input:file, input:text").uniform();
-			
-	$(window).resize(function() {
+jQuery(document).ready(function() {			
+	jQuery(window).resize(function() {
 		ircLogSearch.redrawWindow();
 	});
 					
 	// Set layout correctly on page load
 	ircLogSearch.redrawWindow();
 
-
 	// Get list of IRC servers on page load
 	ircLogSearch.populateIrcServerList();
-		
-}
-//});
+});
 
 var ircLogSearch = {};
-	
+
 ircLogSearch.populateIrcServerList = function() {
 
 	jQuery.ajax({		
@@ -27,17 +21,12 @@ ircLogSearch.populateIrcServerList = function() {
 		dataType: "json",
 		success: function(result) {
 
-			//$("#ircServer").html("");
-			//$("#ircChannel").html("");
+			$("#ircServer").html("");
+			$("#ircChannel").html("");
 
 			for (var i = 0; i < result.length; i++) { 
-					var options = $('#ircServer').attr('options');
-					options[options.length] = new Option(result[i], result[i]);			
-				if (i == 0) {
-					//$("#ircServer").append('<option selected="selected" value="' + result[i] + '">' + result[i] + '</option>');								
-				} else {
-					//$("#ircServer").append('<option value="' + result[i] + '">' + result[i] + '</option>');	
-				}
+				var options = $('#ircServer').attr('options');
+				options[options.length] = new Option(result[i], result[i]);			
 			}	
 		
 			// Calling this method sucessfully always triggers the IRC Channel List to be re-populated too.
@@ -57,17 +46,12 @@ ircLogSearch.populateIrcChannelList = function() {
 		dataType: "json",
 		success: function(result) {
 
-			//$("#ircChannel").html("");
+			$("#ircChannel").html("");
 			
 			for (var i = 0; i < result.length; i++) {
 					var options = $('#ircChannel').attr('options');
-					options[options.length] = new Option(result[i], result[i]);					
-				if (i == 0) {
-					//$("#ircChannel").append('<option selected="selected" value="' + result[i] + '">' + result[i] + '</option>');								
-				} else {
-					//$("#ircChannel").append('<option value="' + result[i] + '">' + result[i] + '</option>');	
-				}
-			}	
+					options[options.length] = new Option(result[i], result[i]);			
+			}
 		}
 		
 	});
@@ -84,7 +68,7 @@ ircLogSearch.selectConversation = function(element, server, channel, startTime, 
 
 ircLogSearch.getConversation = function(server, channel, startTime, endTime, keywords) {
 
-	jQuery('#ircLogSearchResultsLogView').html('<div class="heading">Chat Log</div><div id="ircLogSearchResultsLogViewWrapper"></div>');	
+	jQuery('#ircLogSearchResultsLogViewWrapper').html('<div class="heading">Chat Log</div>');	
 	
 	$.ajax({		
 		url: "ajax/GetConversation.php?timestamp=" + (new Date().getTime().toString()) + "&server=" + encodeURIComponent(server) + "&channel=" + encodeURIComponent(channel) + "&startTime=" + encodeURIComponent(startTime)+ "&endTime=" + encodeURIComponent(endTime)+"&keywords="+keywords,
@@ -92,6 +76,10 @@ ircLogSearch.getConversation = function(server, channel, startTime, endTime, key
 		dataType: "json",
 		success: function(json) {
 
+			jQuery('#ircLogSearchResultsLogView').html('<div class="heading">Chat Log: ' + channel +'</div>'
+                                                      +'<div id="ircLogSearchResultsLogViewWrapper"></div>');		
+			ircLogSearch.redrawWindow();
+		
 			var rowClass = "oddRow";
 			for (var i = 0; i < json['conversation'].length; i++) {
 				
@@ -217,7 +205,6 @@ ircLogSearch.search = function() {
 	return false;
 };
 
-
 ircLogSearch.redrawWindow = function() {
 	  var windowHeight = 0;
 	  if( typeof( window.innerWidth ) == 'number' ) {
@@ -231,7 +218,7 @@ ircLogSearch.redrawWindow = function() {
 	    windowHeight = document.body.clientHeight;
 	  }
 	  
-	var newHeight = windowHeight - 210;
+	var newHeight = windowHeight - 180;
 	if (newHeight < 200)
 		newHeight = 200;
 		

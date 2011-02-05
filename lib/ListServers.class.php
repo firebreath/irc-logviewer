@@ -1,19 +1,14 @@
 <?php
 
 // Load config file
-if (!array_key_exists('irc_log_search', $GLOBALS))
-	$GLOBALS['irc_log_search'] = parse_ini_file("config.ini", true);
+if (!array_key_exists('irc-logviewer-config', $GLOBALS))
+	$GLOBALS['irc-logviewer-config'] = parse_ini_file("config.ini", true);
 
 class ListServers {
 
 	public function getList() {
 	
-		$logDir = $GLOBALS['irc_log_search']['options']['irc_log_dir'];
-			
-		// Use default (relative) directory of "logs" if no value explicitly specified
-		if ($logDir == "")
-			$logDir = dirname(__FILE__)."/../logs";		
-	
+		$logDir = $GLOBALS['irc-logviewer-config']['irc-logviewer']['irc_log_dir'];
 		if (!is_dir($logDir))
 			throw new Exception("IRC log directory not valid.");
 			

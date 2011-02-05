@@ -1,23 +1,21 @@
 <?php
 
+include_once(dirname(__FILE__).'/PathValidator.class.php');
+
 // Load config file
-if (!array_key_exists('irc_log_search', $GLOBALS))
-	$GLOBALS['irc_log_search'] = parse_ini_file("config.ini", true);
+if (!array_key_exists('irc-logviewer-config', $GLOBALS))
+	$GLOBALS['irc-logviewer-config'] = parse_ini_file("config.ini", true);
 
 class ListChannels {
 
 	public function getList($server) {
 
-		$logDir = $GLOBALS['irc_log_search']['options']['irc_log_dir'];
+		$baseLogDir = $GLOBALS['irc-logviewer-config']['irc-logviewer']['irc_log_dir'];
 		
-		// Use default (relative) directory of "logs" if no value explicitly specified
-		if ($logDir == "")
-			$logDir = dirname(__FILE__)."/../logs";
+		// Check $server is a valid log dir (throws exception if not)
+		PathValidator::validateServerLogDir($baseLogDir, $server);
 		
-		$logDir .= "/".escapeshellcmd($server)."/";
-		
-		if (!is_dir($logDir))
-			throw new Exception("IRC log directory not valid.");
+		$logDir = $baseLogDir."/".addslashes($server)."/".addslashes($channel);	
 			
 		$result = array();				
 		$dirHandle = opendir($logDir);

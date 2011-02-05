@@ -1,48 +1,38 @@
 <?php
 
 include_once(dirname(__FILE__).'/SearchResult.class.php');
+include_once(dirname(__FILE__).'/PathValidator.class.php');
 
 // Load config file
-if (!array_key_exists('irc_log_search', $GLOBALS))
-	$GLOBALS['irc_log_search'] = parse_ini_file("config.ini", true);
+if (!array_key_exists('irc-logviewer-config', $GLOBALS))
+	$GLOBALS['irc-logviewer-config'] = parse_ini_file("config.ini", true);
+
+// Set timezone to whatever the time zone of the server currently is (assumes
+// the logs are timestamped using system time, which is overwhelming likely).
+// TODO: Make configurable option in config.ini
+// FIXME: This does not work repliaibly on PHP for Windows (because on
+// Windows the zone value returned is not always in a compatible format).
+@date_default_timezone_set(date("T"));
 
 class Search {
 
-
 	public $searchResults = array();
-	
-	public $conversations;
-	
-	private $matches;
-	private $maxConversationLeadTime;
-	private $maxConversationTime;
-	private $maxConversationIdleTime;
-	private $maxUniqueConversationLength;
-	
+			
 	public function __construct($server, $channel, $keywords) {
-				
-		$this->searchResults = array();
 		
-		// Following changes elsewhere in the code, these don't really work as intended. :-( ... but it's not so important now in practice. 		
-		// Still needs to be reviewed as it's now nasty old cruft.
-		$this->maxConversationLeadTime = 60 * 5; // Include X seconds prior to first keyword mention (suggest ~5 min)
-		$this->maxConversationTime = 60 * 60 * 24; // Include up to X seconds of conversation after first mention (suggest ~60 min)
-		$this->maxConversationIdleTime = 60 * 60 * 24; // Max number of seconds a conversation can 'idle' for before being regarded as 'over' - NB: MUST be >= LeadTime!
-		$this->maxUniqueConversationLength = 60 * 60 * 24; // Allow X seconds between mentions of a keyword counts as a unique conversation (suggest ~30 min)
-				
-		// Use default (relative) directory of "logs" if no value explicitly specified
-		$logDir = $GLOBALS['irc_log_search']['options']['irc_log_dir'];
-		if ($logDir == "")
-			$logDir = dirname(__FILE__)."/../logs";
-		
-		$logDir .= "/".$server."/".$channel;
-		if (!is_dir($logDir))
-			throw new Exception("IRC log directory not valid. $logDir");
-				
-		$this->conversations = array();
-		$this->matches = array();
-		$conversations = array();
-		
+		// Replace leading/trailing spaces and all multiple spaces with single spaces.
+		$keywords = preg_replace("/( )+/", " ", $keywords);
+		$keywords = preg_replace("/ $/", "", $keywords);
+		$keywords = preg_replace("/^ /", "", $keywords);
+						
+		$baseLogDir = $GLOBALS['irc-logviewer-config']['irc-logviewer']['irc_log_dir'];
+
+		// This will throw an exception if the $server or $channel names are not valid
+		PathValidator::validateChannelLogDir($baseLogDir, $server, $channel);
+
+		// Loop through each file in the log diretory and look for matches using searchInFile()
+		// If a match is found a SearchResult object will be pushed into $this->searchResults
+		$logDir = $baseLogDir."/".addslashes($server)."/".addslashes($channel);	
 		$dirHandle = opendir($logDir);
 		$i = 0;
 		while(($filename = readdir($dirHandle)) !== false) {
@@ -58,89 +48,9 @@ class Search {
 			$i++;
 		}
 		closedir($dirHandle);		
-		
-		//die(print_r($this->searchResults,1));
-			
-		//asort($this->searchResults, SORT_NUMERIC);
-		
-
-		//echo count($this->matches);
-		//array = "";
-
-	/*
-		$i = 0;
-		$prevTimestamp = 0;
-		$prevPathToLogFile = "";
-		//for ($i=0; $i<count($this->matches); $i++) {
-		foreach ($this->matches as $timestamp => $pathToLogFile) {
-			if ($i===0) {
-				//array_push($conversations, array($timestamp => $pathToLogFile));
-				$conversations[$timestamp] = $pathToLogFile;
-				$prevTimestamp = $timestamp;
-				$prevPathToLogFile = $pathToLogFile;
-				$i++;	
-				continue;
-			} else {			
-			
-				if (strcmp($prevPathToLogFile, $pathToLogFile) == 0) {	
-					// Only attempt to consolidate conversations in the same logfile
-					$differenceInSeconds = $timestamp - $prevTimestamp;
-					if ($differenceInSeconds > $this->maxUniqueConversationLength)
-						$conversations[$timestamp] = $pathToLogFile;				
-				} else {
-					// If the result is in a log file more recent than the last logfile
-					// (i.e. the filename is different) then add it as a unique conversation
-					$conversations[$timestamp] = $pathToLogFile;	
-				}
-				
-				$prevTimestamp = $timestamp;		
-				$prevPathToLogFile = $pathToLogFile;				
-				$i++;						
-			}
-		}
-	*/
-		/*
-		// Assumes requires log file name in format "channelname_YYYYMMDD.log"
-		foreach ($conversations as $timestamp => $pathToLogFile) {
-
-
-			$conversation = $this->getConversationSummary($pathToLogFile, $timestamp, $keywords);
-			
-			// FIXME: Don't know why this happens, SERIOUS BUG (all items in $conversation returned blank)
-			if (!$conversation['startTime'] || !$conversation['endTime'])		
-				continue;
-					
-			// Sort Keywords and Users by frequency mentioned
-			arsort($conversation['keywords'], SORT_NUMERIC);
-			arsort($conversation['users'], SORT_NUMERIC);	
-			
-			// Calculate duration
-			$conversation['duration'] = $conversation['endTime'] - $conversation['startTime'];			
-			$conversation['duration'] = intval($conversation['duration'] / 60);
-			
-			if ($conversation['duration'] >= 60) {
-					$conversation['duration'] = intval(($conversation['duration']  / 60)) ." hours";
-			} else {
-				$conversation['duration'] .= " minutes";
-			}
-
-			$conversation['startTime'] = date('Y-m-d H:i:s',$conversation['startTime']);
-			$conversation['endTime'] = date('Y-m-d H:i:s',$conversation['endTime']);
-					
-			// Assign a 'score' based on frequency of keywords matched
-			$conversation['score'] = 0;
-			foreach ($conversation['keywords'] as $keyword => $matches) {
-				$conversation['score'] += $matches;
-			}
-			
-			if (count($conversation['users']) > 0)
-				array_push($this->conversations,$conversation);
-		
-		}		
-		*/
 	
 		// Sort all conversations by score (those with the highest score first)
-		// TODO: Optimise so don't need array_reverse()!
+		// TODO: Support additional sort methods and formward/reverse sorting.
 		function sortByScore($a, $b) {
 			if ($a->keywordScore == $b->keywordScore)
 				return 0;	
@@ -181,7 +91,7 @@ class Search {
 			if (strlen($time) < 5) 
 				continue;
 			
-			// Create timestamp for comparisos					
+			// Create timestamp for comparison								
 			$timestamp = strtotime($date." ".$time);		
 
 			// Look for matching keywords anywhere on the line (after the time)
@@ -231,8 +141,8 @@ class Search {
 			$searchResult->duration = $searchResult->endTime - $searchResult->startTime;
 			
 			// Convert from UNIX timestamps to a human readable timestamp
-			$searchResult->startTime = date('Y-m-d H:i:s', $searchResult->startTime);
-			$searchResult->endTime = date('Y-m-d H:i:s', $searchResult->endTime);
+			$searchResult->startTime = date('Y-m-d H:i', $searchResult->startTime);
+			$searchResult->endTime = date('Y-m-d H:i', $searchResult->endTime);
 			 		 
 			// Sort keyword and user arrays by frequency of mentions
 			arsort($searchResult->keywords, SORT_NUMERIC);
