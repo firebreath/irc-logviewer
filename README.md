@@ -92,5 +92,5 @@ Contributing
 -------
 
 I'd love it if you'd like to help with bug reports, feature requests or code!
-I suggest joining us on irc://irc.freenode.net/%23firebreath or emailing me
-directly at <me@iaincollins.com>.
+I suggest joining us on irc://irc.freenode.net/%23firebreath or email 
+<iaincollins@firebreath.org>.
